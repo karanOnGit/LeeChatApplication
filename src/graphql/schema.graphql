@@ -1,0 +1,114 @@
+type User {
+  id: ID!
+  name: String!
+  username: String!
+  avatar: String!
+  status: UserStatus!
+  statusMessage: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  AWAY
+}
+
+type ChatMessage {
+  id: ID!
+  conversationId: ID!
+  senderId: ID!
+  sender: User!
+  content: String!
+  attachments: [Attachment!]
+  reactions: [Reaction!]
+  replyTo: ChatMessage
+  isEdited: Boolean!
+  editedAt: DateTime
+  createdAt: DateTime!
+  readBy: [ID!]!
+}
+
+type Attachment {
+  id: ID!
+  name: String!
+  type: AttachmentType!
+  url: String!
+  size: Int!
+  mimeType: String!
+}
+
+enum AttachmentType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  AUDIO
+}
+
+type Reaction {
+  userId: ID!
+  emoji: String!
+  createdAt: DateTime!
+}
+
+type Chat {
+  id: ID!
+  participants: [User!]!
+  lastMessage: ChatMessage
+  lastMessageAt: DateTime
+  isGroup: Boolean!
+  name: String
+  avatar: String
+  description: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  unreadCount: Int!
+  isPinned: Boolean!
+  isMuted: Boolean!
+}
+
+type PaginatedChats {
+  data: [Chat!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+  totalPages: Int!
+}
+
+type PaginatedMessages {
+  data: [ChatMessage!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+  totalPages: Int!
+}
+
+type Query {
+  chats(filter: ChatFilter, limit: Int, skip: Int): PaginatedChats!
+  chat(id: ID!): Chat
+  messages(conversationId: ID!, limit: Int, skip: Int): PaginatedMessages!
+  searchChats(query: String!): [Chat!]!
+  currentUser: User
+}
+
+input ChatFilter {
+  type: String
+}
+
+type Mutation {
+  sendMessage(input: SendMessageInput!): ChatMessage!
+  editMessage(conversationId: ID!, messageId: ID!, content: String!): ChatMessage!
+  deleteMessage(conversationId: ID!, messageId: ID!): Boolean!
+  markAsRead(conversationId: ID!): Boolean!
+  createChat(participantIds: [ID!]!): Chat!
+}
+
+input SendMessageInput {
+  conversationId: ID!
+  content: String!
+  attachments: [String!]
+  replyTo: ID
+}
+
+scalar DateTime
