@@ -37,15 +37,15 @@ const gridStyles = css`
 const likeCardStyles = css`
   ${atoms.flexColumnCenter}
   padding: ${theme.spacing[4]};
-  background: linear-gradient(135deg, ${theme.colors.red[50]}, ${theme.colors.pink[50]});
+  background: linear-gradient(135deg, ${theme.colors.error[50]}, ${theme.colors.primary[50]});
   border-radius: ${theme.borderRadius.lg};
   cursor: pointer;
   transition: ${theme.transitions.base};
-  border: 1px solid ${theme.colors.red[100]};
+  border: 1px solid ${theme.colors.error[200]};
 
   &:hover {
     transform: scale(1.05);
-    background: linear-gradient(135deg, ${theme.colors.red[100]}, ${theme.colors.pink[100]});
+    background: linear-gradient(135deg, ${theme.colors.error[100]}, ${theme.colors.primary[100]});
   }
 
   gap: ${theme.spacing[2]};
