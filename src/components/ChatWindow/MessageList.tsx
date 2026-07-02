@@ -3,6 +3,7 @@ import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
 import { IChatMessage } from '@types/index';
+import { useAppSelector } from '@hooks/useAppSelector';
 import { MessageBubble } from './MessageBubble';
 
 const containerStyles = css`
@@ -36,6 +37,7 @@ interface MessageListProps {
 
 export const MessageList: React.FC<MessageListProps> = ({ messages, loading = false }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const currentUserId = useAppSelector((state) => state.auth.user?.id);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,7 +70,12 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, loading = fa
       {groupedMessages.map((group, idx) => (
         <div key={idx} className={messageGroupStyles}>
           {group.map((message) => (
-            <MessageBubble key={message.id} message={message} showAvatar={idx === 0} />
+            <MessageBubble
+              key={message.id}
+              message={message}
+              isSent={message.senderId === currentUserId}
+              showAvatar={idx === 0}
+            />
           ))}
         </div>
       ))}

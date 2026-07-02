@@ -90,22 +90,27 @@ export const globalStyles = css`
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
   }
 
+  ::selection {
+    background-color: ${theme.colors.primary[100]};
+    color: ${theme.colors.primary[900]};
+  }
+
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: ${theme.colors.gray[100]};
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${theme.colors.gray[400]};
+    background: ${theme.colors.gray[300]};
     border-radius: 4px;
 
     &:hover {
-      background: ${theme.colors.gray[500]};
+      background: ${theme.colors.gray[400]};
     }
   }
 `;

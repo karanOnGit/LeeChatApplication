@@ -51,6 +51,10 @@ interface SendMessageResponse {
   sendMessage: IChatMessage;
 }
 
+interface EditMessageResponse {
+  editMessage: IChatMessage;
+}
+
 interface DeleteMessageResponse {
   deleteMessage: boolean;
 }
@@ -71,7 +75,7 @@ export class ChatGraphQLService {
   }): Promise<IChat[]> {
     try {
       const data = await graphqlClient.request<ChatsResponse>(CHATS_QUERY, {
-        filter: params.filter ? { type: params.filter } : undefined,
+        filter: params.filter,
         limit: params.limit || 50,
         skip: params.skip || 0,
       });
@@ -141,7 +145,7 @@ export class ChatGraphQLService {
     content: string
   ): Promise<IChatMessage> {
     try {
-      const data = await graphqlClient.request<SendMessageResponse>(
+      const data = await graphqlClient.request<EditMessageResponse>(
         EDIT_MESSAGE_MUTATION,
         {
           conversationId,
@@ -149,7 +153,7 @@ export class ChatGraphQLService {
           content,
         }
       );
-      return data.sendMessage;
+      return data.editMessage;
     } catch (error) {
       console.error('Error editing message:', error);
       throw error;

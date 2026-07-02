@@ -30,7 +30,12 @@ export const messagesSlice = createSlice({
       if (!state.byConversationId[action.payload.conversationId]) {
         state.byConversationId[action.payload.conversationId] = [];
       }
-      state.byConversationId[action.payload.conversationId].push(action.payload.message);
+      const list = state.byConversationId[action.payload.conversationId];
+      // The WS "sent" ack echoes messages already added from the mutation
+      // response, so ignore ids we already have.
+      if (!list.some((m) => m.id === action.payload.message.id)) {
+        list.push(action.payload.message);
+      }
     },
     updateMessage: (
       state,
@@ -42,6 +47,17 @@ export const messagesSlice = createSlice({
         if (index !== -1) {
           messages[index] = action.payload.message;
         }
+      }
+    },
+    removeMessage: (
+      state,
+      action: PayloadAction<{ conversationId: string; messageId: string }>
+    ) => {
+      const messages = state.byConversationId[action.payload.conversationId];
+      if (messages) {
+        state.byConversationId[action.payload.conversationId] = messages.filter(
+          (m) => m.id !== action.payload.messageId
+        );
       }
     },
     setMessageLoading: (
@@ -59,7 +75,13 @@ export const messagesSlice = createSlice({
   },
 });
 
-export const { setMessages, addMessage, updateMessage, setMessageLoading, setMessageError } =
-  messagesSlice.actions;
+export const {
+  setMessages,
+  addMessage,
+  updateMessage,
+  removeMessage,
+  setMessageLoading,
+  setMessageError,
+} = messagesSlice.actions;
 
 export default messagesSlice.reducer;

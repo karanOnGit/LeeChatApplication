@@ -1,43 +1,45 @@
-import axios, { AxiosInstance } from 'axios';
-import { IChat, IChatMessage, IAPIResponse, IPaginatedResponse } from '@types/index';
+import { IChat, IChatMessage, IAPIResponse } from '@types/index';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 class ChatAPI {
-  private api: AxiosInstance;
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: BASE_URL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      withCredentials: true,
-    });
-
-    this.api.interceptors.request.use(
-      (config) => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-
-    this.api.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('token');
-            window.location.href = '/login';
-          }
-        }
-        return Promise.reject(error);
+  private async request<T>(
+    path: string,
+    options: { method?: string; body?: BodyInit; json?: unknown; params?: Record<string, unknown> } = {}
+  ): Promise<IAPIResponse<T>> {
+    const query = new URLSearchParams();
+    Object.entries(options.params || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        query.set(key, String(value));
       }
-    );
+    });
+    const queryString = query.toString();
+    const url = `${BASE_URL}${path}${queryString ? `?${queryString}` : ''}`;
+
+    const headers: Record<string, string> = {};
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    let body = options.body;
+    if (options.json !== undefined) {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(options.json);
+    }
+
+    const response = await fetch(url, { method: options.method || 'GET', headers, body });
+
+    if (response.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+
+    const data = (await response.json().catch(() => null)) as IAPIResponse<T> | null;
+    if (!response.ok || !data) {
+      throw new Error(data?.error || `Request failed (${response.status})`);
+    }
+    return data;
   }
 
   async getChats(params: {
@@ -45,13 +47,11 @@ class ChatAPI {
     limit?: number;
     skip?: number;
   }): Promise<IAPIResponse<IChat[]>> {
-    const response = await this.api.get<IAPIResponse<IChat[]>>('/chats', { params });
-    return response.data;
+    return this.request<IChat[]>('/chats', { params });
   }
 
   async getChat(conversationId: string): Promise<IAPIResponse<IChat>> {
-    const response = await this.api.get<IAPIResponse<IChat>>(`/chats/${conversationId}`);
-    return response.data;
+    return this.request<IChat>(`/chats/${conversationId}`);
   }
 
   async getMessages(params: {
@@ -59,11 +59,9 @@ class ChatAPI {
     limit?: number;
     skip?: number;
   }): Promise<IAPIResponse<IChatMessage[]>> {
-    const response = await this.api.get<IAPIResponse<IChatMessage[]>>(
-      `/chats/${params.conversationId}/messages`,
-      { params: { limit: params.limit, skip: params.skip } }
-    );
-    return response.data;
+    return this.request<IChatMessage[]>(`/chats/${params.conversationId}/messages`, {
+      params: { limit: params.limit, skip: params.skip },
+    });
   }
 
   async sendMessage(payload: {
@@ -83,16 +81,10 @@ class ChatAPI {
       });
     }
 
-    const response = await this.api.post<IAPIResponse<IChatMessage>>(
-      `/chats/${payload.conversationId}/messages`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data;
+    return this.request<IChatMessage>(`/chats/${payload.conversationId}/messages`, {
+      method: 'POST',
+      body: formData,
+    });
   }
 
   async editMessage(
@@ -100,35 +92,29 @@ class ChatAPI {
     messageId: string,
     content: string
   ): Promise<IAPIResponse<IChatMessage>> {
-    const response = await this.api.patch<IAPIResponse<IChatMessage>>(
-      `/chats/${conversationId}/messages/${messageId}`,
-      { content }
-    );
-    return response.data;
+    return this.request<IChatMessage>(`/chats/${conversationId}/messages/${messageId}`, {
+      method: 'PATCH',
+      json: { content },
+    });
   }
 
   async deleteMessage(
     conversationId: string,
     messageId: string
   ): Promise<IAPIResponse<{ success: boolean }>> {
-    const response = await this.api.delete<IAPIResponse<{ success: boolean }>>(
-      `/chats/${conversationId}/messages/${messageId}`
-    );
-    return response.data;
+    return this.request<{ success: boolean }>(`/chats/${conversationId}/messages/${messageId}`, {
+      method: 'DELETE',
+    });
   }
 
   async searchChats(query: string): Promise<IAPIResponse<IChat[]>> {
-    const response = await this.api.get<IAPIResponse<IChat[]>>('/chats/search', {
-      params: { q: query },
-    });
-    return response.data;
+    return this.request<IChat[]>('/chats/search', { params: { q: query } });
   }
 
   async markAsRead(conversationId: string): Promise<IAPIResponse<{ success: boolean }>> {
-    const response = await this.api.post<IAPIResponse<{ success: boolean }>>(
-      `/chats/${conversationId}/mark-as-read`
-    );
-    return response.data;
+    return this.request<{ success: boolean }>(`/chats/${conversationId}/mark-as-read`, {
+      method: 'POST',
+    });
   }
 }
 

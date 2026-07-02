@@ -5,7 +5,7 @@ import { atoms } from '@styles/atoms';
 
 const containerStyles = css`
   padding: ${theme.spacing[4]};
-  border-top: 1px solid ${theme.colors.gray[200]};
+  border-top: 1px solid ${theme.colors.gray[100]};
   background-color: ${theme.colors.white};
 `;
 
@@ -23,11 +23,11 @@ const inputWrapperStyles = css`
   padding: ${theme.spacing[2]} ${theme.spacing[3]};
   border: 1px solid ${theme.colors.gray[200]};
   border-radius: ${theme.borderRadius.full};
-  background-color: ${theme.colors.gray[50]};
+  background-color: ${theme.colors.white};
+  transition: ${theme.transitions.fast};
 
   &:focus-within {
-    border-color: ${theme.colors.primary[500]};
-    background-color: ${theme.colors.white};
+    border-color: ${theme.colors.gray[400]};
   }
 `;
 
@@ -47,8 +47,8 @@ const inputStyles = css`
 `;
 
 const actionButtonStyles = css`
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,11 +56,11 @@ const actionButtonStyles = css`
   background-color: transparent;
   border: none;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   transition: ${theme.transitions.fast};
 
   &:hover {
-    background-color: ${theme.colors.gray[100]};
+    background-color: ${theme.colors.gray[50]};
   }
 
   &:disabled {

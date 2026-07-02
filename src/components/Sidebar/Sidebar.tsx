@@ -11,8 +11,8 @@ const sidebarStyles = css`
   justify-content: space-between;
   height: 100vh;
   background-color: ${theme.colors.white};
-  border-right: 1px solid ${theme.colors.gray[200]};
-  padding: ${theme.spacing[3]} 0;
+  border-right: 1px solid ${theme.colors.gray[100]};
+  padding: ${theme.spacing[4]} 0;
   gap: ${theme.spacing[4]};
 
   @media (max-width: ${theme.breakpoints.md}) {
@@ -32,22 +32,21 @@ const iconButtonStyles = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: ${theme.borderRadius.lg};
+  border-radius: ${theme.borderRadius.md};
   background-color: transparent;
-  color: ${theme.colors.gray[700]};
+  color: ${theme.colors.gray[500]};
   cursor: pointer;
   transition: ${theme.transitions.fast};
   border: none;
-  font-size: 20px;
+  font-size: 18px;
 
   &:hover {
-    background-color: ${theme.colors.gray[100]};
-    color: ${theme.colors.primary[600]};
+    background-color: ${theme.colors.gray[50]};
+    color: ${theme.colors.gray[900]};
   }
 
   &.active {
-    background-color: ${theme.colors.primary[100]};
-    color: ${theme.colors.primary[600]};
+    color: ${theme.colors.gray[900]};
   }
 `;
 

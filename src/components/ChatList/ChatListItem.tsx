@@ -9,8 +9,9 @@ const itemStyles = css`
   display: flex;
   align-items: center;
   gap: ${theme.spacing[3]};
-  padding: ${theme.spacing[3]} ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[100]};
+  margin: 0 ${theme.spacing[2]};
+  padding: ${theme.spacing[3]};
+  border-radius: ${theme.borderRadius.lg};
   cursor: pointer;
   transition: ${theme.transitions.fast};
 
@@ -19,13 +20,13 @@ const itemStyles = css`
   }
 
   &.active {
-    background-color: ${theme.colors.gray[100]};
+    background-color: ${theme.colors.gray[50]};
   }
 `;
 
 const avatarStyles = css`
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: ${theme.borderRadius.full};
   object-fit: cover;
   flex-shrink: 0;
@@ -70,14 +71,14 @@ const unreadBadgeStyles = css`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
   border-radius: ${theme.borderRadius.full};
   background-color: ${theme.colors.primary[600]};
   color: ${theme.colors.white};
   font-size: ${theme.fontSize.xs};
-  font-weight: ${theme.fontWeight.bold};
+  font-weight: ${theme.fontWeight.semibold};
 `;
 
 interface ChatListItemProps {

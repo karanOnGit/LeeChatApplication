@@ -9,7 +9,7 @@ const headerStyles = css`
   align-items: center;
   justify-content: space-between;
   padding: ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
+  border-bottom: 1px solid ${theme.colors.gray[100]};
   background-color: ${theme.colors.white};
 `;
 
@@ -44,7 +44,7 @@ const statusStyles = css`
 
 const actionsStyles = css`
   display: flex;
-  gap: ${theme.spacing[2]};
+  gap: ${theme.spacing[1]};
 
   button {
     width: 36px;
@@ -53,14 +53,16 @@ const actionsStyles = css`
     align-items: center;
     justify-content: center;
     border-radius: ${theme.borderRadius.md};
-    background-color: ${theme.colors.gray[100]};
+    background-color: transparent;
+    color: ${theme.colors.gray[500]};
     border: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px;
     transition: ${theme.transitions.fast};
 
     &:hover {
-      background-color: ${theme.colors.gray[200]};
+      background-color: ${theme.colors.gray[50]};
+      color: ${theme.colors.gray[900]};
     }
   }
 `;

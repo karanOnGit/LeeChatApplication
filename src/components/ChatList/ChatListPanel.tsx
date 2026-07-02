@@ -14,7 +14,7 @@ const panelStyles = css`
   flex-direction: column;
   height: 100vh;
   background-color: ${theme.colors.white};
-  border-right: 1px solid ${theme.colors.gray[200]};
+  border-right: 1px solid ${theme.colors.gray[100]};
   overflow: hidden;
 
   @media (max-width: ${theme.breakpoints.md}) {
@@ -27,7 +27,7 @@ const panelStyles = css`
 
 const headerStyles = css`
   padding: ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
+  border-bottom: 1px solid ${theme.colors.gray[100]};
 `;
 
 const userProfileStyles = css`
@@ -45,23 +45,25 @@ const userNameStyles = css`
 
 const actionButtonsStyles = css`
   display: flex;
-  gap: ${theme.spacing[2]};
+  gap: ${theme.spacing[1]};
 
   button {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: ${theme.borderRadius.md};
-    background-color: ${theme.colors.gray[100]};
+    background-color: transparent;
+    color: ${theme.colors.gray[500]};
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
     transition: ${theme.transitions.fast};
 
     &:hover {
-      background-color: ${theme.colors.gray[200]};
+      background-color: ${theme.colors.gray[50]};
+      color: ${theme.colors.gray[900]};
     }
   }
 `;
@@ -72,15 +74,15 @@ const searchBoxStyles = css`
   input {
     width: 100%;
     padding: ${theme.spacing[2]} ${theme.spacing[3]};
-    border: 1px solid ${theme.colors.gray[200]};
+    border: 1px solid ${theme.colors.gray[100]};
     border-radius: ${theme.borderRadius.lg};
     font-size: ${theme.fontSize.sm};
-    background-color: ${theme.colors.gray[100]};
+    background-color: ${theme.colors.white};
+    transition: ${theme.transitions.fast};
 
     &:focus {
       outline: none;
-      border-color: ${theme.colors.primary[500]};
-      background-color: ${theme.colors.white};
+      border-color: ${theme.colors.gray[300]};
     }
   }
 `;
@@ -90,7 +92,7 @@ const storyGridStyles = css`
   grid-template-columns: repeat(4, 1fr);
   gap: ${theme.spacing[3]};
   padding: ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
+  border-bottom: 1px solid ${theme.colors.gray[100]};
   overflow-x: auto;
 `;
 
@@ -119,15 +121,16 @@ const tabsStyles = css`
   display: flex;
   gap: ${theme.spacing[6]};
   padding: 0 ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
+  border-bottom: 1px solid ${theme.colors.gray[100]};
 
   button {
     padding: ${theme.spacing[3]} 0;
     border: none;
     background: none;
     cursor: pointer;
-    font-weight: ${theme.fontWeight.semibold};
-    color: ${theme.colors.gray[600]};
+    font-weight: ${theme.fontWeight.medium};
+    font-size: ${theme.fontSize.sm};
+    color: ${theme.colors.gray[500]};
     border-bottom: 2px solid transparent;
     transition: ${theme.transitions.fast};
 
@@ -136,8 +139,8 @@ const tabsStyles = css`
     }
 
     &.active {
-      color: ${theme.colors.primary[600]};
-      border-bottom-color: ${theme.colors.primary[600]};
+      color: ${theme.colors.gray[900]};
+      border-bottom-color: ${theme.colors.gray[900]};
     }
   }
 `;

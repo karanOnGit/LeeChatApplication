@@ -30,10 +30,10 @@ const messageContentStyles = (isSent: boolean) => css`
 
 const messageBoxStyles = (isSent: boolean) => css`
   padding: ${theme.spacing[2]} ${theme.spacing[3]};
-  border-radius: ${theme.borderRadius.xl};
+  border-radius: ${theme.borderRadius.lg};
   word-wrap: break-word;
   word-break: break-word;
-  background-color: ${isSent ? theme.colors.primary[600] : theme.colors.gray[100]};
+  background-color: ${isSent ? theme.colors.primary[600] : theme.colors.gray[50]};
   color: ${isSent ? theme.colors.white : theme.colors.gray[900]};
   font-size: ${theme.fontSize.sm};
   line-height: 1.4;
@@ -47,7 +47,7 @@ const timestampStyles = css`
 
 const replyStyles = css`
   background-color: ${theme.colors.gray[50]};
-  border-left: 3px solid ${theme.colors.primary[600]};
+  border-left: 2px solid ${theme.colors.gray[300]};
   padding: ${theme.spacing[2]};
   border-radius: ${theme.borderRadius.sm};
   font-size: ${theme.fontSize.xs};

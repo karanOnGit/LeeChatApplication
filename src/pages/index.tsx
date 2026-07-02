@@ -6,6 +6,8 @@ import { Sidebar } from '@components/Sidebar/Sidebar';
 import { ChatListPanel } from '@components/ChatList/ChatListPanel';
 import { ChatWindow } from '@components/ChatWindow/ChatWindow';
 import { IChat } from '@types/index';
+import { useAuth } from '@hooks/useAuth';
+import { useChatSocket } from '@hooks/useChatSocket';
 
 interface HomePageProps {
   initialChats?: IChat[];
@@ -13,6 +15,9 @@ interface HomePageProps {
 }
 
 export default function HomePage({ buildTime }: HomePageProps) {
+  const { user } = useAuth();
+  useChatSocket(Boolean(user));
+
   return (
     <>
       <Head>

@@ -1,25 +1,27 @@
 import { GraphQLClient } from 'graphql-request';
 
-const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_URL || 'http://localhost:3000/api/graphql';
+const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_URL || '/api/graphql';
 
+const getToken = (): string | null =>
+  typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+// Headers are resolved per request so a login/logout in the current session
+// takes effect immediately, without recreating the client.
 export const graphqlClient = new GraphQLClient(endpoint, {
-  headers: {
-    'Content-Type': 'application/json',
+  headers: (): Record<string, string> => {
+    const token = getToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
   },
 });
 
-// Add auth token if available
-if (typeof window !== 'undefined') {
-  const token = localStorage.getItem('token');
-  if (token) {
-    graphqlClient.setHeader('Authorization', `Bearer ${token}`);
-  }
-}
-
 export const setAuthToken = (token: string) => {
-  graphqlClient.setHeader('Authorization', `Bearer ${token}`);
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('token', token);
+  }
 };
 
 export const clearAuthToken = () => {
-  graphqlClient.setHeader('Authorization', '');
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('token');
+  }
 };
