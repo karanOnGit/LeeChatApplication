@@ -1,5 +1,5 @@
 import { dummyChats, dummyMessages, dummyUsers } from './dummyData';
-import { IChat, IChatMessage } from '@types/index';
+import { IChat, IChatMessage } from '@localTypes/index';
 
 // Store for mutations (in-memory)
 let chatsStore = JSON.parse(JSON.stringify(dummyChats));

@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
-import { IChat } from '@types/index';
+import { IChat } from '@localTypes/index';
 import { formatDistanceToNow } from 'date-fns';
 
 const itemStyles = css`

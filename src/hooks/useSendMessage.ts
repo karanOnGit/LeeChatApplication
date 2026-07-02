@@ -3,7 +3,7 @@ import { useAppDispatch } from './index';
 import { addMessage, setMessageError } from '@store/slices/messagesSlice';
 import { updateConversation } from '@store/slices/chatSlice';
 import { chatGraphQLService } from '@services/graphql/chatService';
-import { IChatMessage } from '@types/index';
+import { IChatMessage } from '@localTypes/index';
 
 interface SendMessageParams {
   conversationId: string;

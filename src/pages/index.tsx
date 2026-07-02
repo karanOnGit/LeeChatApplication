@@ -5,7 +5,7 @@ import { BaseLayout } from '@components/Layout/BaseLayout';
 import { Sidebar } from '@components/Sidebar/Sidebar';
 import { ChatListPanel } from '@components/ChatList/ChatListPanel';
 import { ChatWindow } from '@components/ChatWindow/ChatWindow';
-import { IChat } from '@types/index';
+import { IChat } from '@localTypes/index';
 import { useAuth } from '@hooks/useAuth';
 import { useChatSocket } from '@hooks/useChatSocket';
 

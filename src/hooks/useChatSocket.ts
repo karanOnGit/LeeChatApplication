@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from './index';
 import { addMessage, updateMessage, removeMessage } from '@store/slices/messagesSlice';
-import { IChatMessage } from '@types/index';
+import { IChatMessage } from '@localTypes/index';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000/ws';
 const RECONNECT_DELAY_MS = 3000;

@@ -1,4 +1,4 @@
-import { IUser, IChat, IChatMessage } from '@types/index';
+import { IUser, IChat, IChatMessage } from '@localTypes/index';
 
 export const dummyUsers: IUser[] = [
   {

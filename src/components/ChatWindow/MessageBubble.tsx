@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
-import { IChatMessage } from '@types/index';
+import { IChatMessage } from '@localTypes/index';
 import { formatDistanceToNow } from 'date-fns';
 
 const bubbleStyles = (isSent: boolean) => css`

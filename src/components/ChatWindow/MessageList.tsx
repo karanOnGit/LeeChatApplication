@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
-import { IChatMessage } from '@types/index';
+import { IChatMessage } from '@localTypes/index';
 import { useAppSelector } from '@hooks/useAppSelector';
 import { MessageBubble } from './MessageBubble';
 

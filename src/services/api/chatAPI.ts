@@ -1,4 +1,4 @@
-import { IChat, IChatMessage, IAPIResponse } from '@types/index';
+import { IChat, IChatMessage, IAPIResponse } from '@localTypes/index';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IChat, IAPIResponse } from '@types/index';
+import { IChat, IAPIResponse } from '@localTypes/index';
 
 type ResponseData = IAPIResponse<IChat[]>;
 

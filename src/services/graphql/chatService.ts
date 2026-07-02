@@ -13,7 +13,7 @@ import {
   MARK_AS_READ_MUTATION,
   CREATE_CHAT_MUTATION,
 } from '@graphql/mutations';
-import { IChat, IChatMessage, IUser } from '@types/index';
+import { IChat, IChatMessage, IUser } from '@localTypes/index';
 
 interface ChatsResponse {
   chats: {

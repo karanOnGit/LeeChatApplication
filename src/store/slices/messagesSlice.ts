@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IChatMessage } from '@types/index';
+import { IChatMessage } from '@localTypes/index';
 
 interface MessagesState {
   byConversationId: Record<string, IChatMessage[]>;

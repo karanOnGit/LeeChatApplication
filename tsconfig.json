@@ -47,7 +47,7 @@
       "@utils/*": [
         "src/utils/*"
       ],
-      "@types/*": [
+      "@localTypes/*": [
         "src/types/*"
       ],
       "@constants/*": [
