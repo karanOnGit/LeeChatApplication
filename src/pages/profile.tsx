@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
 import { BaseLayout } from '@components/Layout/BaseLayout';
 import { Sidebar } from '@components/Sidebar/Sidebar';
+import { useAuth, useAppDispatch } from '@hooks/index';
+import { setUser, logout } from '@store/slices/authSlice';
+import { clearAuthToken } from '@graphql/client';
 
 const containerStyles = css`
   display: flex;
@@ -14,26 +18,6 @@ const containerStyles = css`
   background-color: ${theme.colors.white};
   border-right: 1px solid ${theme.colors.gray[200]};
   overflow-y: auto;
-`;
-
-const headerStyles = css`
-  padding: ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
-`;
-
-const titleStyles = css`
-  font-size: ${theme.fontSize['2xl']};
-  font-weight: ${theme.fontWeight.bold};
-`;
-
-const contentStyles = css`
-  flex: 1;
-  overflow-y: auto;
-`;
-
-const sectionStyles = css`
-  padding: ${theme.spacing[4]};
-  border-bottom: 1px solid ${theme.colors.gray[200]};
 `;
 
 const coverStyles = css`
@@ -89,6 +73,7 @@ const statusBadgeStyles = css`
   border-radius: ${theme.borderRadius.full};
   font-size: ${theme.fontSize.xs};
   font-weight: ${theme.fontWeight.semibold};
+  text-transform: capitalize;
 `;
 
 const bioStyles = css`
@@ -120,6 +105,11 @@ const statNumberStyles = css`
 const statLabelStyles = css`
   font-size: ${theme.fontSize.sm};
   color: ${theme.colors.gray[600]};
+`;
+
+const sectionStyles = css`
+  padding: ${theme.spacing[4]};
+  border-bottom: 1px solid ${theme.colors.gray[200]};
 `;
 
 const settingItemStyles = css`
@@ -157,6 +147,24 @@ const buttonStyles = css`
   &:hover {
     background-color: ${theme.colors.primary[700]};
   }
+
+  &.secondary {
+    background-color: ${theme.colors.gray[100]};
+    color: ${theme.colors.gray[900]};
+
+    &:hover {
+      background-color: ${theme.colors.gray[200]};
+    }
+  }
+
+  &.danger {
+    background-color: ${theme.colors.error[600]};
+    color: ${theme.colors.white};
+
+    &:hover {
+      background-color: ${theme.colors.error[700]};
+    }
+  }
 `;
 
 const contentPanelStyles = css`
@@ -174,7 +182,77 @@ const contentPanelStyles = css`
   }
 `;
 
+const modalBackdropStyles = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: ${theme.zIndex.modal};
+`;
+
+const modalContentStyles = css`
+  background-color: ${theme.colors.white};
+  padding: ${theme.spacing[6]};
+  border-radius: ${theme.borderRadius.xl};
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing[4]};
+`;
+
+const inputStyles = css`
+  width: 100%;
+  padding: ${theme.spacing[3]};
+  border: 1px solid ${theme.colors.gray[300]};
+  border-radius: ${theme.borderRadius.md};
+  font-size: ${theme.fontSize.sm};
+  outline: none;
+
+  &:focus {
+    border-color: ${theme.colors.primary[600]};
+  }
+`;
+
 export default function ProfilePage() {
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const [editMode, setEditMode] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editStatusMsg, setEditStatusMsg] = useState('');
+
+  const handleOpenEdit = () => {
+    if (user) {
+      setEditName(user.name);
+      setEditStatusMsg(user.statusMessage || '');
+      setEditMode(true);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    if (user) {
+      dispatch(setUser({
+        ...user,
+        name: editName,
+        statusMessage: editStatusMsg,
+      }));
+      setEditMode(false);
+    }
+  };
+
+  const handleLogout = () => {
+    clearAuthToken();
+    dispatch(logout());
+    router.replace('/login');
+  };
+
   return (
     <>
       <Head>
@@ -190,20 +268,20 @@ export default function ProfilePage() {
 
           <div className={profileHeaderStyles}>
             <img
-              src="https://i.pravatar.cc/150?img=0"
+              src={user?.avatar || "https://i.pravatar.cc/150?img=0"}
               alt="Profile"
               className={avatarStyles}
             />
             <div className={userInfoStyles}>
-              <h1 className={nameStyles}>You</h1>
-              <p className={usernameStyles}>@reely_karan</p>
-              <span className={statusBadgeStyles}>● Online</span>
+              <h1 className={nameStyles}>{user?.name || 'Loading...'}</h1>
+              <p className={usernameStyles}>@{user?.username || 'loading'}</p>
+              <span className={statusBadgeStyles}>● {user?.status || 'online'}</span>
             </div>
-            <button className={buttonStyles}>Edit Profile</button>
+            <button className={buttonStyles} onClick={handleOpenEdit}>Edit Profile</button>
           </div>
 
           <div className={bioStyles}>
-            <p>🚀 Building amazing applications | 💻 Full-stack developer | 🎯 Always learning</p>
+            <p>🚀 {user?.statusMessage || 'Building amazing applications | Full-stack developer | Always learning'}</p>
             <p style={{ marginTop: theme.spacing[2], fontSize: theme.fontSize.sm, color: theme.colors.gray[500] }}>
               📍 India | 🔗 leechat.dev
             </p>
@@ -211,15 +289,15 @@ export default function ProfilePage() {
 
           <div className={statsGridStyles}>
             <div className={statItemStyles}>
-              <div className={statNumberStyles}>245</div>
-              <div className={statLabelStyles}>Posts</div>
+              <div className={statNumberStyles}>12</div>
+              <div className={statLabelStyles}>Conversations</div>
             </div>
             <div className={statItemStyles}>
-              <div className={statNumberStyles}>1.2K</div>
+              <div className={statNumberStyles}>145</div>
               <div className={statLabelStyles}>Followers</div>
             </div>
             <div className={statItemStyles}>
-              <div className={statNumberStyles}>567</div>
+              <div className={statNumberStyles}>98</div>
               <div className={statLabelStyles}>Following</div>
             </div>
           </div>
@@ -230,7 +308,7 @@ export default function ProfilePage() {
             </h3>
             <div className={settingItemStyles}>
               <span className={settingLabelStyles}>Email</span>
-              <span className={settingValueStyles}>reely_karan@example.com</span>
+              <span className={settingValueStyles}>{user?.username || 'user'}@example.com</span>
             </div>
             <div className={settingItemStyles}>
               <span className={settingLabelStyles}>Phone</span>
@@ -241,6 +319,12 @@ export default function ProfilePage() {
               <span className={settingValueStyles}>January 1, 2024</span>
             </div>
           </div>
+
+          <div className={sectionStyles} style={{ display: 'flex', justifyContent: 'flex-end', padding: theme.spacing[4] }}>
+            <button className={`${buttonStyles} danger`} onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className={contentPanelStyles}>
@@ -248,6 +332,47 @@ export default function ProfilePage() {
           <p>View profile details</p>
         </div>
       </BaseLayout>
+
+      {/* Edit Profile Modal */}
+      {editMode && (
+        <div className={modalBackdropStyles}>
+          <div className={modalContentStyles}>
+            <h3 style={{ fontWeight: theme.fontWeight.bold, fontSize: theme.fontSize.lg, marginBottom: theme.spacing[2] }}>
+              Edit Profile
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+              <label style={{ fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.semibold, color: theme.colors.gray[600] }}>
+                Name
+              </label>
+              <input
+                className={inputStyles}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Name"
+              />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing[1] }}>
+              <label style={{ fontSize: theme.fontSize.xs, fontWeight: theme.fontWeight.semibold, color: theme.colors.gray[600] }}>
+                Status Message
+              </label>
+              <input
+                className={inputStyles}
+                value={editStatusMsg}
+                onChange={(e) => setEditStatusMsg(e.target.value)}
+                placeholder="Status Message"
+              />
+            </div>
+            <div style={{ display: 'flex', gap: theme.spacing[2], justifyContent: 'flex-end', marginTop: theme.spacing[2] }}>
+              <button className={`${buttonStyles} secondary`} onClick={() => setEditMode(false)}>
+                Cancel
+              </button>
+              <button className={buttonStyles} onClick={handleSaveProfile}>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

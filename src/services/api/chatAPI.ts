@@ -1,4 +1,4 @@
-import { IChat, IChatMessage, IAPIResponse } from '@localTypes/index';
+import { IChat, IChatMessage, IAPIResponse, IUser } from '@localTypes/index';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
@@ -115,6 +115,10 @@ class ChatAPI {
     return this.request<{ success: boolean }>(`/chats/${conversationId}/mark-as-read`, {
       method: 'POST',
     });
+  }
+
+  async getUsers(): Promise<IAPIResponse<IUser[]>> {
+    return this.request<IUser[]>('/users');
   }
 }
 

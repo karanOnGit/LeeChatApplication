@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { css } from '@emotion/css';
 import { theme } from '@styles/theme';
 import { atoms } from '@styles/atoms';
 import { BaseLayout } from '@components/Layout/BaseLayout';
 import { Sidebar } from '@components/Sidebar/Sidebar';
+import { useAppDispatch } from '@hooks/useAppDispatch';
+import { logout } from '@store/slices/authSlice';
+import { clearAuthToken } from '@graphql/client';
 
 const containerStyles = css`
   display: flex;
@@ -111,11 +115,6 @@ const selectStyles = css`
   }
 `;
 
-const buttonGroupStyles = css`
-  display: flex;
-  gap: ${theme.spacing[2]};
-`;
-
 const buttonStyles = css`
   padding: ${theme.spacing[2]} ${theme.spacing[4]};
   border: 1px solid ${theme.colors.gray[200]};
@@ -168,10 +167,40 @@ const contentPanelStyles = css`
 `;
 
 export default function SettingsPage() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [privacy, setPrivacy] = useState('friends');
   const [theme_, setTheme] = useState('light');
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Sync dark mode toggle with document style
+  const handleDarkModeToggle = () => {
+    const nextDark = !darkMode;
+    setDarkMode(nextDark);
+    if (nextDark) {
+      document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+      document.body.style.backgroundColor = '#111827';
+    } else {
+      document.body.style.filter = 'none';
+      document.body.style.backgroundColor = '';
+    }
+  };
+
+  const handleLogout = () => {
+    clearAuthToken();
+    dispatch(logout());
+    router.replace('/login');
+  };
+
+  const handleSaveChanges = () => {
+    setSuccessMsg('Settings saved successfully!');
+    setTimeout(() => {
+      setSuccessMsg(null);
+      router.push('/');
+    }, 1500);
+  };
 
   return (
     <>
@@ -187,6 +216,12 @@ export default function SettingsPage() {
           <div className={headerStyles}>
             <h1 className={titleStyles}>Settings</h1>
           </div>
+
+          {successMsg && (
+            <div style={{ padding: theme.spacing[4], backgroundColor: theme.colors.success[100], color: theme.colors.success[700], textAlign: 'center', fontWeight: theme.fontWeight.semibold }}>
+              {successMsg}
+            </div>
+          )}
 
           {/* Notifications Section */}
           <div className={settingsSectionStyles}>
@@ -212,16 +247,6 @@ export default function SettingsPage() {
                 className={`${toggleStyles} enabled`}
               />
             </div>
-
-            <div className={settingItemStyles}>
-              <div className={settingLabelStyles}>
-                <div className={labelNameStyles}>Email Notifications</div>
-                <div className={labelDescStyles}>Receive notifications via email</div>
-              </div>
-              <button
-                className={`${toggleStyles}`}
-              />
-            </div>
           </div>
 
           {/* Appearance Section */}
@@ -235,7 +260,7 @@ export default function SettingsPage() {
               </div>
               <button
                 className={`${toggleStyles} ${darkMode ? 'enabled' : ''}`}
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={handleDarkModeToggle}
               />
             </div>
 
@@ -275,35 +300,6 @@ export default function SettingsPage() {
                 <option value="private">Private</option>
               </select>
             </div>
-
-            <div className={settingItemStyles}>
-              <div className={settingLabelStyles}>
-                <div className={labelNameStyles}>Two-Factor Authentication</div>
-                <div className={labelDescStyles}>Add extra security to your account</div>
-              </div>
-              <button className={buttonStyles}>Enable</button>
-            </div>
-          </div>
-
-          {/* Storage Section */}
-          <div className={settingsSectionStyles}>
-            <h2 className={sectionTitleStyles}>💾 Storage & Data</h2>
-
-            <div className={settingItemStyles}>
-              <div className={settingLabelStyles}>
-                <div className={labelNameStyles}>Storage Used</div>
-                <div className={labelDescStyles}>2.5 GB of 5 GB</div>
-              </div>
-              <button className={buttonStyles}>Clear Cache</button>
-            </div>
-
-            <div className={settingItemStyles}>
-              <div className={settingLabelStyles}>
-                <div className={labelNameStyles}>Download Your Data</div>
-                <div className={labelDescStyles}>Export all your data</div>
-              </div>
-              <button className={buttonStyles}>Download</button>
-            </div>
           </div>
 
           {/* Danger Zone */}
@@ -315,15 +311,7 @@ export default function SettingsPage() {
                 <div className={labelNameStyles}>Logout</div>
                 <div className={labelDescStyles}>Sign out from your account</div>
               </div>
-              <button className={`${buttonStyles} danger`}>Logout</button>
-            </div>
-
-            <div className={settingItemStyles}>
-              <div className={settingLabelStyles}>
-                <div className={labelNameStyles}>Delete Account</div>
-                <div className={labelDescStyles}>Permanently delete your account</div>
-              </div>
-              <button className={`${buttonStyles} danger`}>Delete</button>
+              <button className={`${buttonStyles} danger`} onClick={handleLogout}>Logout</button>
             </div>
           </div>
 
@@ -332,8 +320,8 @@ export default function SettingsPage() {
             className={settingsSectionStyles}
             style={{ display: 'flex', gap: theme.spacing[2], justifyContent: 'flex-end' }}
           >
-            <button className={buttonStyles}>Cancel</button>
-            <button className={`${buttonStyles} primary`}>Save Changes</button>
+            <button className={buttonStyles} onClick={() => router.push('/')}>Cancel</button>
+            <button className={`${buttonStyles} primary`} onClick={handleSaveChanges}>Save Changes</button>
           </div>
         </div>
 
